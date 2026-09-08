@@ -245,6 +245,21 @@ const PANEL_STATES: readonly string[] = [
   "hidden group-has-[#journey-stop-6:checked]:block",
 ];
 
+/**
+ * The small screen's road, as one range shared by the fill and the marker.
+ *
+ * Desktop drives both from `--road-progress`, a value the reader sets. Mobile
+ * has no such value, so scroll stands in for it — and the two must read the
+ * same clock or the marker will sit off the end of its own road. Naming the
+ * range once is what guarantees that.
+ *
+ * `cover 6%` to `cover 86%` rather than the full range: the marker reaches the
+ * last phase while that phase is still on screen, instead of arriving as the
+ * section leaves. See the `rail-fill` note in globals.css for how this behaves
+ * where scroll-driven animations are not supported.
+ */
+const RAIL_SCROLL = "[animation-timeline:view()] [animation-range:cover_6%_cover_86%]";
+
 /** See the `sign-settle` note in globals.css. One entrance for the whole road. */
 const SETTLE =
   "animate-sign-settle [animation-timeline:view()] [animation-range:cover_0px_cover_280px]";
@@ -319,74 +334,113 @@ export function JourneySection() {
           road then cannot be disturbed by anything done here.
         */}
         <div className="mt-8 lg:hidden">
-          <ol className="relative flex flex-col gap-7 pl-8">
-            {/* The rail. Full height rather than inset to the first and last
-                markers: it is a margin rule the phases are pinned to, not a
-                road being travelled, so it has no start or end to report. */}
-            <span aria-hidden="true" className="absolute inset-y-0 left-[0.4375rem] w-px bg-line" />
+          {/* The rail lives on this wrapper rather than inside the list: an
+              <ol> may only contain list items, and the road, its fill and the
+              marker are none of them. `--rail-x` is the one number the four
+              pieces are aligned from — rule, marker, phase glyphs, and the
+              list's own indent all read it, so the column cannot come apart. */}
+          <div className="relative pl-10 [--rail-x:0.875rem]">
+            {/* The road ahead: the full run, so the journey's length is stated
+                before it is travelled. */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-y-0 left-[var(--rail-x)] w-px -translate-x-1/2 bg-line-strong"
+            />
 
-            {JOURNEY_PHASES.map((phase) => (
-              <li key={phase.label} className="relative">
-                {/* Pulled back out over the rail by exactly the list's own
-                    padding, so the glyph's centre and the rule's centre are
-                    the same line at every width. */}
-                <PhaseMarkerIcon
-                  className="absolute -left-8 top-[0.15625rem] size-3.5 text-brand"
-                />
-                <h3 className="text-[0.875rem] font-semibold leading-snug tracking-[-0.01em] text-foreground">
-                  {phase.label}
-                </h3>
+            {/* The road behind, revealed by clipping rather than by growing —
+                the same technique the desktop road uses, so no layout is
+                touched as it fills. Flat brand rather than the road gradient:
+                see the --road-fill note in globals.css. */}
+            <span
+              aria-hidden="true"
+              className={cn(
+                "absolute inset-y-0 left-[var(--rail-x)] w-px -translate-x-1/2 animate-rail-fill bg-brand",
+                RAIL_SCROLL,
+              )}
+            />
 
-                {/* One card per phase, its steps stacked inside — so a phase
-                    with two steps reads as one week containing two things
-                    rather than as two unrelated weeks. */}
-                <div className="mt-3 rounded-xl border border-line bg-background p-4">
-                  {phase.steps.map((step, stepIndex) => {
-                    const StopIcon = STOP_ICONS[step.icon];
+            <ol className="flex flex-col gap-7">
+              {JOURNEY_PHASES.map((phase) => (
+                <li key={phase.label} className="relative">
+                  {/* Pulled back out over the rail by the list's own indent,
+                      then centred on it, so the glyph's centre and the rule's
+                      centre are the same line at every width. */}
+                  <PhaseMarkerIcon
+                    className="absolute left-[calc(var(--rail-x)-2.5rem)] top-[0.15625rem] size-3.5 -translate-x-1/2 text-brand"
+                  />
+                  <h3 className="text-[0.875rem] font-semibold leading-snug tracking-[-0.01em] text-foreground">
+                    {phase.label}
+                  </h3>
 
-                    return (
-                      <div key={step.title} className={stepIndex > 0 ? "mt-5" : undefined}>
-                        <div className="flex items-center gap-2.5">
-                          <StopIcon aria-hidden="true" className="size-[1.0625rem] shrink-0 text-foreground" />
-                          <h4 className="min-w-0 text-[0.9375rem] font-semibold leading-snug tracking-[-0.01em] text-foreground">
-                            {step.title}
-                          </h4>
-                        </div>
+                  {/* One card per phase, its steps stacked inside — so a phase
+                      with two steps reads as one week containing two things
+                      rather than as two unrelated weeks. */}
+                  <div className="mt-3 rounded-xl border border-line bg-background p-4">
+                    {phase.steps.map((step, stepIndex) => {
+                      const StopIcon = STOP_ICONS[step.icon];
 
-                        <p className="mt-2 text-[0.875rem] leading-relaxed text-secondary-text">
-                          {step.body}
-                        </p>
+                      return (
+                        <div key={step.title} className={stepIndex > 0 ? "mt-5" : undefined}>
+                          <div className="flex items-center gap-2.5">
+                            <StopIcon aria-hidden="true" className="size-[1.0625rem] shrink-0 text-foreground" />
+                            <h4 className="min-w-0 text-[0.9375rem] font-semibold leading-snug tracking-[-0.01em] text-foreground">
+                              {step.title}
+                            </h4>
+                          </div>
 
-                        {step.note ? (
                           <p className="mt-2 text-[0.875rem] leading-relaxed text-secondary-text">
-                            {step.note}
+                            {step.body}
                           </p>
-                        ) : null}
 
-                        {step.disclosure ? <StepDetail disclosure={step.disclosure} /> : null}
+                          {step.note ? (
+                            <p className="mt-2 text-[0.875rem] leading-relaxed text-secondary-text">
+                              {step.note}
+                            </p>
+                          ) : null}
 
-                        {/* The closing line, printed rather than spoken: on
-                            this layout it is on screen from first paint, so
-                            the desktop cheer would fire off-screen, to nobody,
-                            long before the reader scrolled down to it. */}
-                        {step.outcome ? (
-                          <p className="mt-4 flex items-center gap-2.5 rounded-lg bg-brand-light px-3 py-2.5 text-[0.875rem] font-semibold leading-snug text-foreground">
-                            <span
-                              aria-hidden="true"
-                              className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground"
-                            >
-                              <CheckIcon className="size-3" />
-                            </span>
-                            {step.outcome}
-                          </p>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              </li>
-            ))}
-          </ol>
+                          {step.disclosure ? <StepDetail disclosure={step.disclosure} /> : null}
+
+                          {/* The closing line, printed rather than spoken: on
+                              this layout it is on screen from first paint, so
+                              the desktop cheer would fire off-screen, to nobody,
+                              long before the reader scrolled down to it. */}
+                          {step.outcome ? (
+                            <p className="mt-4 flex items-center gap-2.5 rounded-lg bg-brand-light px-3 py-2.5 text-[0.875rem] font-semibold leading-snug text-foreground">
+                              <span
+                                aria-hidden="true"
+                                className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground"
+                              >
+                                <CheckIcon className="size-3" />
+                              </span>
+                              {step.outcome}
+                            </p>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            {/* The reader, on the road — last in the source so it passes over
+                the phase glyphs rather than under them, exactly as the desktop
+                marker passes over the nodes. The wrapper is stretched to the
+                rail's full height and is the thing that travels; the disc only
+                centres itself on the rule, so the two transforms never land on
+                one element and fight. */}
+            <span
+              aria-hidden="true"
+              className={cn(
+                "pointer-events-none absolute inset-y-0 left-[var(--rail-x)] w-0 animate-rail-house",
+                RAIL_SCROLL,
+              )}
+            >
+              <span className="flex size-7 -translate-x-1/2 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-[var(--house-glow)] ring-4 ring-brand-light">
+                <HouseMarkerIcon className="size-4" />
+              </span>
+            </span>
+          </div>
         </div>
 
         {/*

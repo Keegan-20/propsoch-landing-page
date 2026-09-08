@@ -319,6 +319,55 @@
     }
   }
 
+  /*
+   * The house on the small screen's rail.
+   *
+   * Desktop's marker is driven by the reader: they pick a stop and it travels
+   * there. The mobile layout has no stops to pick — every step is already open
+   * — so the only thing left that can answer "where am I in this" is scroll
+   * position, and that is what drives it here. What the reader sees is the
+   * same as on desktop: brand road behind the marker, plain road ahead of it.
+   * Only the input differs.
+   *
+   * Both are stated `linear` and both are hung on one shared range in the
+   * component, so the fill and the marker can never disagree about where the
+   * journey has got to.
+   *
+   * The durations exist for browsers without scroll-driven animations (Safari
+   * < 26), where these run once on load and `both` fill leaves the marker at
+   * the end of a full road — the same "arrived" state the desktop marker
+   * finishes on, which is the right thing to be left looking at. Under
+   * `prefers-reduced-motion` the clamp below hands the timeline back to `auto`
+   * and they snap straight to it.
+   */
+  --animate-rail-fill: rail-fill 900ms linear both;
+  --animate-rail-house: rail-house 900ms linear both;
+
+  @keyframes rail-fill {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /*
+   * Translated by a percentage of the marker's own wrapper, which is stretched
+   * to the full height of the rail — so the travel is exactly the rail's
+   * length with nothing measured in script, at any number of phases and any
+   * card height. Less one marker, so it finishes flush with the end of the
+   * rail instead of hanging off it.
+   */
+  @keyframes rail-house {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(100% - 1.75rem));
+    }
+  }
+
   /* Generic opacity fade. Used by the search modal's backdrop. */
   --animate-fade-in: fade-in 180ms ease-out;
 
@@ -395,16 +444,24 @@
      * marking does. No new orange is introduced — it is `--primary` mixed with
      * `--background`, both already in the table above.
      *
-     * Horizontal only: the vertical rail draws its progress a stage at a time
-     * rather than as one continuous bar, and a gradient repeated across six
-     * short segments reads as banding rather than as light.
+     * Defined in both directions, because the road is drawn in both: the
+     * desktop road runs across, and the small screen's rail runs down. The
+     * mobile rail does not use either — a 1px rule metres long would band
+     * rather than catch light, so it fills flat brand instead.
      *
      * `--house-glow` is the marker's own contact shadow, warm rather than
      * neutral so the disc reads as sitting *on* the road rather than floating
      * over the page.
      */
-    --road-fill: linear-gradient(
+    --road-fill-h: linear-gradient(
       90deg,
+      var(--color-brand) 0%,
+      color-mix(in oklab, var(--color-brand) 66%, var(--color-background)) 52%,
+      var(--color-brand) 100%
+    );
+    /* The same light, turned down the page, for the vertical road. */
+    --road-fill-v: linear-gradient(
+      180deg,
       var(--color-brand) 0%,
       color-mix(in oklab, var(--color-brand) 66%, var(--color-background)) 52%,
       var(--color-brand) 100%
