@@ -14,6 +14,7 @@ import {
   HouseMarkerIcon,
   KeyIcon,
   ListIcon,
+  PhaseMarkerIcon,
   PhoneIcon,
   PinIcon,
   ReportIcon,
@@ -290,6 +291,105 @@ export function JourneySection() {
         </div>
 
         {/*
+          Below `lg`, the journey is a read rather than a thing to operate.
+
+          The signpost above is a wayfinding device: six signs held in one
+          glance, a road that fills, a marker you move. All three depend on
+          width. On a phone the signs stack into a column of slivers, the road
+          becomes six short segments, and "all six at once" — the whole reason
+          the control exists — is gone; what is left is a tap-to-reveal that
+          hides five sixths of the section behind a gesture, on the one screen
+          size where a reader is most likely to be skimming.
+
+          So the small screen gets the other honest shape: every step open, in
+          order, grouped under the phase it belongs to, on a plain rail. No
+          state, no radios, nothing to discover — you scroll and you have read
+          the journey. The phases are the source of truth here as they are up
+          there, but the flattening in `STOPS` is skipped, because grouping is
+          exactly what a vertical read wants: "Week 1" is written once with its
+          two steps beneath it, rather than twice on two separate signs.
+
+          Type is set a step down from the desktop panel (title 15px against
+          22px, body 14px against 15px), which is what a card 320px wide can
+          hold without every line breaking twice.
+
+          It is a second tree rather than a reflow of the first because the two
+          share no structure — one is a radio group with a single visible
+          panel, the other is a static grouped list — and because the desktop
+          road then cannot be disturbed by anything done here.
+        */}
+        <div className="mt-8 lg:hidden">
+          <ol className="relative flex flex-col gap-7 pl-8">
+            {/* The rail. Full height rather than inset to the first and last
+                markers: it is a margin rule the phases are pinned to, not a
+                road being travelled, so it has no start or end to report. */}
+            <span aria-hidden="true" className="absolute inset-y-0 left-[0.4375rem] w-px bg-line" />
+
+            {JOURNEY_PHASES.map((phase) => (
+              <li key={phase.label} className="relative">
+                {/* Pulled back out over the rail by exactly the list's own
+                    padding, so the glyph's centre and the rule's centre are
+                    the same line at every width. */}
+                <PhaseMarkerIcon
+                  className="absolute -left-8 top-[0.15625rem] size-3.5 text-brand"
+                />
+                <h3 className="text-[0.875rem] font-semibold leading-snug tracking-[-0.01em] text-foreground">
+                  {phase.label}
+                </h3>
+
+                {/* One card per phase, its steps stacked inside — so a phase
+                    with two steps reads as one week containing two things
+                    rather than as two unrelated weeks. */}
+                <div className="mt-3 rounded-xl border border-line bg-background p-4">
+                  {phase.steps.map((step, stepIndex) => {
+                    const StopIcon = STOP_ICONS[step.icon];
+
+                    return (
+                      <div key={step.title} className={stepIndex > 0 ? "mt-5" : undefined}>
+                        <div className="flex items-center gap-2.5">
+                          <StopIcon aria-hidden="true" className="size-[1.0625rem] shrink-0 text-foreground" />
+                          <h4 className="min-w-0 text-[0.9375rem] font-semibold leading-snug tracking-[-0.01em] text-foreground">
+                            {step.title}
+                          </h4>
+                        </div>
+
+                        <p className="mt-2 text-[0.875rem] leading-relaxed text-secondary-text">
+                          {step.body}
+                        </p>
+
+                        {step.note ? (
+                          <p className="mt-2 text-[0.875rem] leading-relaxed text-secondary-text">
+                            {step.note}
+                          </p>
+                        ) : null}
+
+                        {step.disclosure ? <StepDetail disclosure={step.disclosure} /> : null}
+
+                        {/* The closing line, printed rather than spoken: on
+                            this layout it is on screen from first paint, so
+                            the desktop cheer would fire off-screen, to nobody,
+                            long before the reader scrolled down to it. */}
+                        {step.outcome ? (
+                          <p className="mt-4 flex items-center gap-2.5 rounded-lg bg-brand-light px-3 py-2.5 text-[0.875rem] font-semibold leading-snug text-foreground">
+                            <span
+                              aria-hidden="true"
+                              className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground"
+                            >
+                              <CheckIcon className="size-3" />
+                            </span>
+                            {step.outcome}
+                          </p>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/*
           `min-w-0` is load-bearing, not tidying. Browsers give <fieldset> a UA
           `min-inline-size: min-content`, which Tailwind's preflight does not
           reset — so without it the fieldset refuses to shrink below the widest
@@ -305,7 +405,7 @@ export function JourneySection() {
         */}
         <fieldset
           className={cn(
-            "group mt-10 min-w-0 [--journey-row:5.25rem] md:grid md:grid-cols-[19rem_minmax(0,1fr)] md:gap-x-8 lg:mt-14 lg:block",
+            "group mt-10 hidden min-w-0 [--journey-row:5.25rem] lg:mt-14 lg:block",
             SETTLE,
           )}
         >

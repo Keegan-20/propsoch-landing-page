@@ -133,6 +133,18 @@ export const KeyIcon = (props: IconProps) => (
  * the silhouette reading as a plain pentagon. The stroke is trimmed to 1.6
  * because a white line on saturated orange optically thickens.
  */
+/**
+ * The phase marker on the mobile journey rail: a filled four-point sparkle
+ * rather than a plain dot, so a phase heading is distinguishable at a glance
+ * from the hairline rail it sits on. Solid, so it overrides `Icon`'s stroked
+ * default rather than inheriting it.
+ */
+export const PhaseMarkerIcon = (props: IconProps) => (
+  <Icon fill="currentColor" stroke="none" {...props}>
+    <path d="M10 1.5Q11 9 18.5 10Q11 11 10 18.5Q9 11 1.5 10Q9 9 10 1.5Z" />
+  </Icon>
+);
+
 export const HouseMarkerIcon = (props: IconProps) => (
   <Icon strokeWidth="1.6" {...props}>
     <path d="M2.9 9.4 10 3.6l7.1 5.8" />
