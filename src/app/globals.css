@@ -1,26 +1,183 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Propsoch design tokens.
+ *
+ * Every value below is copied verbatim from the live site's stylesheet — the
+ * semantic `:root` block (--background / --foreground / --primary / --border)
+ * plus the coolgrey and orange scales those tokens are built from. No invented
+ * colours: where a role needed a value, it was taken from their existing scale.
+ *
+ * Note: white on --primary is 2.8:1. That is how propsoch.com renders its own
+ * CTAs (--states-foreground #fafafa on --primary), so it is reproduced here;
+ * contrast tuning is deliberately deferred.
+ */
+@theme {
+  /* semantic tokens — propsoch.com :root */
+  --color-background: #ffffff; /* --background */
+  --color-foreground: #0a0a0a; /* --foreground, also the footer surface */
+  --color-brand: #ff6d33; /* --primary / --orange-70 */
+  --color-brand-strong: #ff4b04; /* --orange-80, CTA hover */
+  --color-brand-light: #fff5f0; /* --primarylight */
+  --color-brand-foreground: #fafafa; /* --states-foreground, label on --primary */
+  --color-border-dark: #3b3b3b; /* --border, hairlines on dark surfaces */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* coolgrey scale — propsoch.com */
+  --color-surface: #f2f3f7; /* coolgrey-10, their --accent / --card */
+  --color-line: #e6e8f0; /* coolgrey-20, border-neutral-weakest */
+  --color-line-strong: #d5d8e3; /* coolgrey-30, border-neutral-weak */
+  --color-muted: #85869d; /* coolgrey-60, text-neutral-weakest */
+  --color-secondary-text: #66677e; /* --secondary-text / coolgrey-70 */
+  --color-weak: #484960; /* coolgrey-80, text-neutral-weak */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Hero motion. Two primitives only: a staggered entrance rise, and a
+     line-drawing reveal for the analysis overlay. `backwards` fill means the
+     element sits at the keyframe's `from` state during its delay, so nothing
+     depends on an animation actually running to become visible. */
+  --animate-hero-rise: hero-rise 900ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+  --animate-analysis-draw: analysis-draw 1100ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+  --animate-analysis-fade: analysis-fade 600ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
   }
+
+  /* The hero card holds the LCP image. Chrome does not count an element as
+     painted until it is opaque, so fading the card in pushed LCP from 104ms to
+     1284ms — measured. This variant moves without fading: the entrance still
+     reads, and the image is painted immediately. */
+  --animate-hero-rise-visual: hero-rise-visual 900ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+
+  @keyframes hero-rise-visual {
+    from {
+      transform: translateY(20px);
+    }
+  }
+
+  /* Paths carry pathLength="1", so one offset works for any geometry. */
+  @keyframes analysis-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  
+  --animate-live-ping: live-ping 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-live-dot: live-dot 2.5s ease-in-out infinite;
+
+  @keyframes live-ping {
+    0% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    70%,
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  @keyframes live-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.62;
+    }
+  }
+
+  /* Generic opacity fade. Used by the search modal's backdrop. */
+  --animate-fade-in: fade-in 180ms ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes analysis-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  /* Hero display type only. The rest of the page still sets headings in
+     --font-display. */
+  --font-hero: var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    /* lets the disclosure animate to its natural height */
+    interpolate-size: allow-keywords;
+  }
+
+  /*
+   * Smooth expand for <details>. Progressive enhancement: browsers without
+   * ::details-content ignore this entirely and open instantly.
+   */
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size 260ms ease,
+      content-visibility 260ms allow-discrete;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    /* keep anchored sections clear of the sticky header */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* matches their --ring token */
+  :focus-visible {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      /* Without this, an infinite animation (the live dot) would loop at
+         0.01ms rather than stop. */
+      animation-iteration-count: 1 !important;
+      /* Staggered entrances use `backwards` fill: without this, an element
+         would sit at its hidden `from` state for the length of its delay. */
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
