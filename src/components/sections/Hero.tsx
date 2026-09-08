@@ -32,30 +32,42 @@ export function Hero() {
               >
                 {HERO.headline.lead}{" "}
                 {/*
-                  The emphasis is annotated rather than underlined: a single
-                  drawn stroke that lands with a flick, using the same
-                  pathLength-normalised reveal the property overlay uses. The
-                  headline gets marked up the way the building does — which is
-                  the whole argument of the section. Sized in `em` so the mark
-                  tracks the type at every breakpoint.
+                  The emphasis is annotated rather than underlined: a drawn
+                  wave that reveals itself with the same pathLength-normalised
+                  stroke the property overlay uses, then never settles — it
+                  keeps travelling, the way water does. The headline gets
+                  marked up the way the building does, which is the whole
+                  argument of the section. Sized in `em` so the mark tracks the
+                  type at every breakpoint.
+
+                  The geometry is five full periods for a 100-unit box: three
+                  visible, plus a period of overhang on the left and one on the
+                  right, so the looping one-period drift (see wave-drift)
+                  always has wave to spare at both edges. The mask feathers those cut ends so the
+                  stroke tapers off like ink rather than stopping dead. Still
+                  pure CSS — the section ships no client JavaScript.
                 */}
                 <span className="relative inline-block">
                   {HERO.headline.emphasis}
                   <svg
-                    viewBox="0 0 100 12"
+                    viewBox="0 0 100 18"
                     preserveAspectRatio="none"
                     fill="none"
                     aria-hidden="true"
                     focusable="false"
-                    className="absolute -bottom-[0.07em] left-0 h-[0.19em] w-full overflow-visible"
+                    className="absolute -bottom-[0.195em] left-0 h-[0.4em] w-full [mask-image:linear-gradient(to_right,transparent,#000_7%,#000_93%,transparent)]"
                   >
-                    <path
-                      d="M-2 8.6C24 4.6 58 3.9 84 5.6L103 2.4"
-                      pathLength={1}
-                      strokeWidth={5.5}
-                      strokeLinecap="round"
-                      className="animate-analysis-draw stroke-brand [animation-delay:820ms] [stroke-dasharray:1]"
-                    />
+                    <g className="animate-wave-swell [animation-delay:820ms] [transform-box:view-box] [transform-origin:50px_9px]">
+                      <g className="animate-wave-drift [animation-delay:1900ms]">
+                        <path
+                          d="M-33.33 9q8.333-7.5 16.667 0t16.667 0t16.667 0t16.667 0t16.667 0t16.667 0t16.667 0t16.667 0t16.667 0"
+                          pathLength={1}
+                          strokeWidth={5.5}
+                          strokeLinecap="round"
+                          className="animate-wave-draw stroke-brand [animation-delay:820ms] [stroke-dasharray:1]"
+                        />
+                      </g>
+                    </g>
                   </svg>
                 </span>
                 {HERO.headline.trail}

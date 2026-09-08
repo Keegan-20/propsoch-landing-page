@@ -22,6 +22,14 @@
   --color-brand-foreground: #fafafa; /* --states-foreground, label on --primary */
   --color-border-dark: #3b3b3b; /* --border, hairlines on dark surfaces */
 
+  /* Comparison-column tints. Derived rather than invented: each is --primary
+     mixed into an existing surface at a fixed weight, so the Propsoch column
+     stays on the brand hue without ever reaching a saturated orange.
+       --color-brand-tint = 14% --primary in white         (column header band)
+       --color-brand-line = 22% --primary in --primarylight (column edge) */
+  --color-brand-tint: #ffebe2;
+  --color-brand-line: #ffd7c6;
+
   /* coolgrey scale — propsoch.com */
   --color-surface: #f2f3f7; /* coolgrey-10, their --accent / --card */
   --color-line: #e6e8f0; /* coolgrey-20, border-neutral-weakest */
@@ -64,6 +72,42 @@
     }
   }
 
+  /* The headline mark is a wave rather than a rule. It draws itself in, then
+     idles: the wave geometry runs a full period wider than the box on either
+     side, so translating it by exactly one period (33.33 user units) loops
+     seamlessly and the crests keep travelling. A slower, out-of-phase swell of
+     the amplitude keeps the loop from reading as a rigid conveyor — the two
+     periods never line up, so the motion stays liquid.
+
+     `wave-draw` starts part-drawn: the path begins one period off-screen left,
+     so 1 - 33.33/166.67 of it is already behind the left edge when the reveal
+     starts. */
+  --animate-wave-draw: wave-draw 1100ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+  --animate-wave-drift: wave-drift 3200ms linear infinite;
+  --animate-wave-swell: wave-swell 4300ms ease-in-out infinite;
+
+  @keyframes wave-draw {
+    from {
+      stroke-dashoffset: 0.8;
+    }
+  }
+
+  @keyframes wave-drift {
+    to {
+      transform: translateX(-33.333px);
+    }
+  }
+
+  @keyframes wave-swell {
+    0%,
+    100% {
+      transform: scaleY(0.86);
+    }
+    50% {
+      transform: scaleY(1.14);
+    }
+  }
+
   
   --animate-live-ping: live-ping 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
   --animate-live-dot: live-dot 2.5s ease-in-out infinite;
@@ -87,6 +131,42 @@
     }
     50% {
       opacity: 0.62;
+    }
+  }
+
+  /* Comparison section entrance. Driven by a view-progress timeline rather
+     than a delay, so the table settles as it reaches the viewport instead of
+     having already happened by the time you scroll to it — and still with no
+     IntersectionObserver and no client JavaScript.
+
+     Ranges are given as lengths, not percentages, so the reveal always takes
+     the same ~300px of scroll whether the table has five rows or nine.
+
+     Progressive enhancement: a browser without scroll-driven animations
+     (Safari < 26) drops `animation-timeline` and runs these once on load,
+     which lands on the same end state. `both` fill means neither case can
+     leave content stranded at the `from` keyframe.
+
+     Only two elements move. Row-by-row reveals were tried and dropped: on a
+     scrubbed timeline a slow scroll parks body copy at half opacity, which is
+     worse than no animation at all. */
+  --animate-compare-rise: compare-rise 700ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  --animate-compare-lift: compare-lift 700ms cubic-bezier(0.33, 1, 0.68, 1) both;
+
+  @keyframes compare-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  /* The Propsoch column starts lower and fades over a longer range than the
+     table under it, so it reads as being set down on top of the comparison.
+     Its shadow comes in for free: opacity applies to the box-shadow too. */
+  @keyframes compare-lift {
+    from {
+      opacity: 0;
+      transform: translateY(26px);
     }
   }
 
@@ -177,6 +257,10 @@
       /* Staggered entrances use `backwards` fill: without this, an element
          would sit at its hidden `from` state for the length of its delay. */
       animation-delay: 0ms !important;
+      /* A scroll-driven animation ignores `animation-duration`, so the clamp
+         above cannot reach it. Handing it back the document timeline lets the
+         0.01ms duration snap it straight to its end state. */
+      animation-timeline: auto !important;
       transition-duration: 0.01ms !important;
     }
   }
