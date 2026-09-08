@@ -84,3 +84,59 @@ export const CloseIcon = (props: IconProps) => (
     <path d="M5 5l10 10M15 5L5 15" />
   </Icon>
 );
+
+/* Journey stops. One glyph per signboard, drawn on the same 20×20 grid and the
+   same 1.75 stroke as the set above so a sign never looks like it borrowed its
+   icon from somewhere else. */
+
+export const PhoneIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M7.1 2.9 4.9 3.7a1.7 1.7 0 0 0-1.1 2c.6 2.9 2 5.3 4 7.3s4.4 3.4 7.3 4a1.7 1.7 0 0 0 2-1.1l.8-2.2a1 1 0 0 0-.5-1.2l-2.6-1.2a1 1 0 0 0-1.2.3l-.8 1a10.6 10.6 0 0 1-4.3-4.3l1-.8a1 1 0 0 0 .3-1.2L8.3 3.4a1 1 0 0 0-1.2-.5Z" />
+  </Icon>
+);
+
+export const ClipboardIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M7.5 4H6a1.5 1.5 0 0 0-1.5 1.5v10A1.5 1.5 0 0 0 6 17h8a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 14 4h-1.5" />
+    <path d="M8.5 2.5h3a1 1 0 0 1 1 1v1.5h-5V3.5a1 1 0 0 1 1-1Z" />
+    <path d="M7.5 9.5h5M7.5 12.5h3" />
+  </Icon>
+);
+
+export const ListIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M8 5.5h8M8 10h8M8 14.5h8" />
+    <path d="M4.5 5.5h.01M4.5 10h.01M4.5 14.5h.01" />
+  </Icon>
+);
+
+export const PinIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M10 17.5s5.5-4.9 5.5-8.6a5.5 5.5 0 1 0-11 0c0 3.7 5.5 8.6 5.5 8.6Z" />
+    <circle cx="10" cy="8.8" r="2" />
+  </Icon>
+);
+
+export const KeyIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <circle cx="7" cy="13" r="3.2" />
+    <path d="m9.3 10.7 6-6M13.1 6.9l1.5 1.5M15.3 4.7l1.5 1.5" />
+  </Icon>
+);
+
+/**
+ * The marker that travels the journey road, and the only glyph in this file
+ * drawn for one specific job: it renders at 16px, reversed out of a filled
+ * brand disc, and it has to still read as a house at that size. So it carries
+ * three strokes and no more — gable, walls, door — and the door is arched
+ * rather than square, which is the one detail that survives the size and stops
+ * the silhouette reading as a plain pentagon. The stroke is trimmed to 1.6
+ * because a white line on saturated orange optically thickens.
+ */
+export const HouseMarkerIcon = (props: IconProps) => (
+  <Icon strokeWidth="1.6" {...props}>
+    <path d="M2.9 9.4 10 3.6l7.1 5.8" />
+    <path d="M4.7 8.1v8.3h10.6V8.1" />
+    <path d="M8.2 16.4v-3.9a1.8 1.8 0 0 1 3.6 0v3.9" />
+  </Icon>
+);

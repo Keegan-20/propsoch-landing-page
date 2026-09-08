@@ -170,6 +170,155 @@
     }
   }
 
+  /*
+   * Journey signposts.
+   *
+   * `sign-settle` runs once over the whole signpost row as it reaches the
+   * viewport, on a view-progress timeline rather than a delay, so the road
+   * arrives as you scroll to it. Stated as a length, so it always takes the
+   * same ~280px of scroll.
+   *
+   * `panel-in` is the swap between stops. Short, and opacity plus a few pixels
+   * only: the panel changes on a click the reader just made, so it needs to
+   * confirm the change, not perform it. The 140ms delay is the last beat of
+   * one ordered interaction — the sign takes the state, the road runs to it,
+   * the house travels, and the panel is what you are left reading — so it is
+   * baked into the shorthand rather than added as a utility, where its order
+   * against `animation` would be up to the compiler.
+   *
+   * Both use `both` fill, so a browser without scroll-driven animations
+   * (Safari < 26) runs sign-settle once on load and lands on the same end
+   * state. Nothing can be left stranded at a `from` keyframe.
+   */
+  --animate-sign-settle: sign-settle 700ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  --animate-panel-in: panel-in 240ms cubic-bezier(0.33, 1, 0.68, 1) 140ms both;
+
+  @keyframes sign-settle {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+
+  /*
+   * Arrival. Both of these belong to the last stop only, and both restart on
+   * their own: an animation runs again whenever its name changes from `none`,
+   * which is exactly what `group-has-[…stop-6:checked]` does to the two
+   * elements below. Reaching the door twice celebrates twice, with no
+   * JavaScript to retrigger anything.
+   *
+   * `house-land` is deliberately flat until 72%. The marker is still moving
+   * until then — 560ms of travel behind a 120ms delay is 680ms of a 900ms
+   * animation — so the squash lands on the beat the house stops, not before
+   * it. One bounce, 14% of overshoot gone in 220ms: a settle, not a hop.
+   *
+   * `spark` is the entire celebration: eight 3-5px dots pushed a short way out
+   * along `--spark-x` / `--spark-y` and gone inside a second. Each carries its
+   * own delay, set inline, which holds it behind that same arrival: a
+   * celebration that starts while the house is still travelling is celebrating
+   * nothing. It ends at opacity 0, so under `prefers-reduced-motion` — where
+   * the global clamp cuts every duration to 0.01ms and snaps an animation to
+   * its last keyframe — the dots are never painted at all.
+   */
+  --animate-house-land: house-land 900ms cubic-bezier(0.33, 1, 0.68, 1) both;
+  --animate-spark: spark 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes house-land {
+    0%,
+    72% {
+      transform: scale(1);
+    }
+    84% {
+      transform: scale(1.14);
+    }
+    93% {
+      transform: scale(0.98);
+    }
+  }
+
+  @keyframes spark {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) scale(0.5);
+    }
+    /* The curve puts a dot ~87% of the way out by 40% of its run, so peaking
+       the opacity here lights each one just as it clears the marker. */
+    40% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: translate3d(var(--spark-x), var(--spark-y), 0) scale(0.85);
+    }
+  }
+
+  /*
+   * The closing line.
+   *
+   * "Congratulations! you found your home sweet home!" is the only sentence in
+   * the section that reports an outcome rather than a step, and it is the one
+   * place the page is allowed to sound pleased. So it arrives spoken rather
+   * than printed: the tick pops and rings once, then the words land one at a
+   * time, 38ms apart, each overshooting slightly on the same curve the house
+   * settles onto. Seven short beats — the sentence reads as said aloud, and it
+   * is over in a second.
+   *
+   * The timings are set so the last word lands just after the marker reaches
+   * the door: the panel, the road and the sentence all finish the journey on
+   * the same beat rather than three times over.
+   *
+   * Nothing triggers any of this. The stop-6 panel goes `display:none` →
+   * `block` when its radio is checked, and animations on a subtree that was
+   * not being rendered start from zero the moment it is — so the cheer replays
+   * every time the reader arrives, and never plays for a stop they are not on.
+   * `both` fill is what keeps that safe: under `prefers-reduced-motion`, where
+   * the global clamp cuts every duration to 0.01ms and zeroes every delay, all
+   * three snap straight to their end state and the sentence is simply there.
+   */
+  --animate-cheer-word: cheer-word 520ms cubic-bezier(0.34, 1.28, 0.64, 1) both;
+  --animate-cheer-badge: cheer-badge 620ms cubic-bezier(0.33, 1, 0.68, 1) 380ms both;
+  --animate-cheer-ring: cheer-ring 760ms cubic-bezier(0.16, 1, 0.3, 1) 620ms both;
+
+  @keyframes cheer-word {
+    from {
+      opacity: 0;
+      transform: translateY(0.45em);
+    }
+  }
+
+  @keyframes cheer-badge {
+    from {
+      opacity: 0;
+      transform: scale(0.35);
+    }
+    40% {
+      opacity: 1;
+    }
+    62% {
+      transform: scale(1.12);
+    }
+  }
+
+  /* One ring, out of the tick and gone. It stops at 1.9 because the band is
+     56px tall and the badge 24px: any wider and the panel's chevron clips it. */
+  @keyframes cheer-ring {
+    from {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.9);
+    }
+  }
+
   /* Generic opacity fade. Used by the search modal's backdrop. */
   --animate-fade-in: fade-in 180ms ease-out;
 
@@ -196,6 +345,81 @@
   :root {
     /* lets the disclosure animate to its natural height */
     interpolate-size: allow-keywords;
+
+    /*
+     * Signboard geometry and depth.
+     *
+     * The chevron is cut with `clip-path` rather than faked with a rotated
+     * square pinned to one edge: a polygon gives a real signboard silhouette at
+     * any size, and every strip inside the plate gets mitred by the same cut for
+     * free, which is what makes a sign read as one piece of material instead of
+     * a card with a decoration stuck on it. The cost is that a clipped box can
+     * carry neither a border nor a box-shadow, so both are rebuilt: the edge is
+     * an identically-clipped parent showing through a 1px pad, and the depth is
+     * `drop-shadow`, which traces the clipped silhouette where `box-shadow`
+     * would trace the rectangle behind it.
+     *
+     * Two depths of point, because one ratio does not survive both sizes: 1.5rem
+     * on the detail plate, 0.75rem on the small signs, where a full-depth
+     * chevron would eat the title.
+     */
+    --sign-point: polygon(
+      0 0,
+      calc(100% - 1.5rem) 0,
+      100% 50%,
+      calc(100% - 1.5rem) 100%,
+      0 100%
+    );
+    --sign-point-sm: polygon(
+      0 0,
+      calc(100% - 0.75rem) 0,
+      100% 50%,
+      calc(100% - 0.75rem) 100%,
+      0 100%
+    );
+
+    /* A contact shadow plus one soft ambient at rest; on hover the ambient
+       deepens and warms towards the brand hue, as if the sign had swung a
+       little further off the post. */
+    --sign-shadow: drop-shadow(0 1px 1px rgb(10 10 10 / 0.05))
+      drop-shadow(0 12px 18px rgb(10 10 10 / 0.09));
+    --sign-shadow-lifted: drop-shadow(0 2px 2px rgb(255 109 51 / 0.14))
+      drop-shadow(0 18px 26px rgb(10 10 10 / 0.14));
+
+    /*
+     * The road, and the marker travelling it.
+     *
+     * The filled stretch is a gradient rather than a flat brand line: the same
+     * hue lifted towards the page's own background at the midpoint, so the
+     * line catches a little light along its length the way a painted road
+     * marking does. No new orange is introduced — it is `--primary` mixed with
+     * `--background`, both already in the table above.
+     *
+     * Horizontal only: the vertical rail draws its progress a stage at a time
+     * rather than as one continuous bar, and a gradient repeated across six
+     * short segments reads as banding rather than as light.
+     *
+     * `--house-glow` is the marker's own contact shadow, warm rather than
+     * neutral so the disc reads as sitting *on* the road rather than floating
+     * over the page.
+     */
+    --road-fill: linear-gradient(
+      90deg,
+      var(--color-brand) 0%,
+      color-mix(in oklab, var(--color-brand) 66%, var(--color-background)) 52%,
+      var(--color-brand) 100%
+    );
+    --house-glow: 0 8px 18px -8px color-mix(in oklab, var(--color-brand) 70%, transparent);
+
+    /*
+     * Journey easing. `--ease-journey` is the decelerate the road fill and the
+     * panels share. `--ease-arrive` is the same curve given a little overshoot,
+     * and it is only ever used on the house: a marker that stops dead on a stop
+     * reads as a value being set, whereas one that runs slightly past and
+     * settles back reads as something arriving.
+     */
+    --ease-journey: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-arrive: cubic-bezier(0.34, 1.28, 0.64, 1);
   }
 
   /*
@@ -262,6 +486,12 @@
          0.01ms duration snap it straight to its end state. */
       animation-timeline: auto !important;
       transition-duration: 0.01ms !important;
+      /* Staged transitions have the same problem staggered entrances do: the
+         journey's road fill and house marker are each held back a beat so the
+         interaction reads in order, and without this the clamped transition
+         would still sit out that delay before snapping. State changes have to
+         be immediate here, not merely instantaneous once they start. */
+      transition-delay: 0ms !important;
     }
   }
 }

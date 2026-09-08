@@ -61,9 +61,17 @@ export type StepDisclosure = {
   readonly items: readonly string[];
 };
 
+/**
+ * Which glyph a journey stop wears on its signboard. A key rather than a
+ * component, so content stays free of JSX and the mapping lives in the one
+ * component that renders it.
+ */
+export type StepIcon = "call" | "form" | "list" | "visit" | "report" | "key";
+
 export type JourneyStep = {
   readonly title: string;
   readonly body: string;
+  readonly icon: StepIcon;
   /** Secondary detail shown as a tag rather than body copy. */
   readonly note?: string;
   /** Closing line for the final step. */

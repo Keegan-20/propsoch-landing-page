@@ -33,13 +33,20 @@ const PEACE_OF_MIND_REPORT: StepDisclosure = {
   ],
 };
 
+/**
+ * `icon` is the only field here that is not copy: it names which glyph the
+ * stop's signboard wears, so the content file stays free of JSX. Every string
+ * below is propsoch.com's own, verbatim and complete — the redesign adds no
+ * line of its own to this section.
+ */
 export const JOURNEY_PHASES: readonly JourneyPhase[] = [
   {
-    label: "Today",
+    label: "Start Guided Home Buying today",
     steps: [
       {
         title: "A quick free call",
         body: "We walk you through our services, answer any immediate questions and set the stage for what's next.",
+        icon: "call",
       },
     ],
   },
@@ -48,11 +55,13 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
     steps: [
       {
         title: "Discovery form",
-        body: "Tell us what you are looking for so that your advisor can start building a shortlist of verified projects",
+        body: "Tell us what you are looking for so that your advisor can start building a shortlist of verified projects.",
+        icon: "form",
       },
       {
         title: "Longlist call",
         body: "The team curates a list of 10-12 properties tailored to your preferences and walks you through in detail.",
+        icon: "list",
       },
     ],
   },
@@ -62,6 +71,7 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
       {
         title: "Site visits",
         body: "Once we've narrowed down the final 4-5 properties, it's time for seeing and analysing them in person!",
+        icon: "visit",
       },
     ],
   },
@@ -71,7 +81,8 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
       {
         title: "Deepdiving",
         body: "Found the one? Get your 'Peace of Mind' report within a day. Everything you need to know about the property, in one place.",
-        note: "Along with loan assistance",
+        icon: "report",
+        note: "Along with loan assistance.",
         disclosure: PEACE_OF_MIND_REPORT,
       },
     ],
@@ -82,6 +93,7 @@ export const JOURNEY_PHASES: readonly JourneyPhase[] = [
       {
         title: "Negotiation and Closure",
         body: "Take your time and once you're ready, we'll handle the negotiation and seal the best deal for you.",
+        icon: "key",
         outcome: "Congratulations! you found your home sweet home!",
       },
     ],
