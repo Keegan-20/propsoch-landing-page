@@ -27,30 +27,10 @@ const SOCIAL_ICONS = {
   email: MailIcon,
 } as const;
 
-/**
- * Geometry for the oversized wordmark, shared verbatim by the resting word and
- * the lit copy that sweeps over it. One constant rather than two class lists:
- * the two are stacked on top of each other and have to agree on every metric,
- * so there is nowhere for them to be edited apart.
- *
- * Sized in `cqw` against the footer's own content box, so the word spans the
- * column grid at every width instead of tracking the viewport and running past
- * the gutter on a wide screen. Set in the page's display face — the same one
- * the hero headline uses — because at this size it is a graphic, not a label.
- */
 const GIANT_WORDMARK = cn(
-  "block whitespace-nowrap bg-clip-text font-hero text-[24.8cqw] font-bold",
-  "-mt-[0.2em] leading-none tracking-[-0.04em] text-transparent",
-  // `background-clip: text` paints no further than the element's own box, so a
-  // box narrower than the glyph run drops the tail of the word to transparent —
-  // the final `h` simply vanishes. `w-max` makes the box *be* the glyph run, so
-  // it holds whatever the text measures; a percentage of the column grid cannot,
-  // because it is a guess about font metrics that a fallback face invalidates.
-  // The padding covers glyph overhang, which sits outside the advance width.
-  // `self-start` keeps the box at its own line-box height: the wrappers are
-  // flex containers now, and a stretched item would take the clipped 0.63em
-  // height instead, re-scaling the vertical gradient that fills the letters.
-  "w-max self-start px-[0.06em]",
+  "block whitespace-nowrap bg-clip-text font-hero text-[22.4cqw] font-bold",
+  "-mt-[0.106em] leading-none tracking-[-0.04em] text-transparent",
+  "w-max self-start px-[0.06em] pb-[0.02em]",
 );
 
 export function Footer() {
@@ -130,10 +110,11 @@ export function Footer() {
         </div>
 
         
-        <div className="@container mt-15 grid grid-cols-[minmax(0,1fr)] border-t border-border-dark">
+        <div className="@container  mt-15 grid grid-cols-[minmax(0,1fr)] border-t border-border-dark">
+          
           <div
             aria-hidden
-            className="pointer-events-none relative col-start-1 row-start-1 flex h-[0.63em] select-none justify-center overflow-y-clip text-[24.8cqw]"
+            className="pointer-events-none relative col-start-1 row-start-1 -mx-5 flex h-[0.91em] select-none justify-center overflow-y-clip text-[22.4cqw] sm:-mx-8 lg:-mx-10 mt-1.5"
           >
             <span
               className={cn(GIANT_WORDMARK, "[background-image:var(--footer-wordmark-fill)]")}
