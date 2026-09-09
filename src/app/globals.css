@@ -368,6 +368,44 @@
     }
   }
 
+  /*
+   * The shine that crosses the oversized footer wordmark.
+   *
+   * Two animations rather than one, because the only property either is
+   * allowed to touch is `transform`. The band is a static gradient mask on a
+   * full-width "window" that travels across the word; the copy of the word
+   * inside it runs the identical curve in the opposite direction, so the
+   * glyphs stay pinned while the lit band moves over them. Same duration, same
+   * easing, started in the same frame, so the two can never drift apart — and
+   * the compositor gets two layers it can move without repainting either.
+   *
+   * 6.5s, and the band is only a third of the width, so the sweep itself is
+   * over in about a second and a half and the word is at rest the rest of the
+   * time. The curve holds it slow at both ends, where it is off the word
+   * anyway, and lets it run through the middle: light passing over, rather
+   * than a marquee.
+   */
+  --animate-shine-band: shine-band 6500ms cubic-bezier(0.5, 0.02, 0.28, 1) infinite;
+  --animate-shine-anchor: shine-anchor 6500ms cubic-bezier(0.5, 0.02, 0.28, 1) infinite;
+
+  @keyframes shine-band {
+    from {
+      transform: translate3d(-115%, 0, 0);
+    }
+    to {
+      transform: translate3d(115%, 0, 0);
+    }
+  }
+
+  @keyframes shine-anchor {
+    from {
+      transform: translate3d(115%, 0, 0);
+    }
+    to {
+      transform: translate3d(-115%, 0, 0);
+    }
+  }
+
   /* Generic opacity fade. Used by the search modal's backdrop. */
   --animate-fade-in: fade-in 180ms ease-out;
 
@@ -477,6 +515,47 @@
      */
     --ease-journey: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-arrive: cubic-bezier(0.34, 1.28, 0.64, 1);
+
+    /*
+     * The oversized wordmark the footer sits on.
+     *
+     * `--footer-wordmark-fill` is --primary lifted out of the black surface,
+     * faintest where the letters begin and strongest where they run off the
+     * bottom of the page, so the word reads as light coming up from under the
+     * footer rather than as a slab of colour laid on top of it. Stated as a
+     * mix against the token, so it follows --primary if that ever moves.
+     *
+     * `--footer-wordmark-shine` is the lit copy. It is painted over the fill
+     * rather than in place of it, so these are the few points of warmth the
+     * sweep *adds* — hence the much lower mix. Warm rather than white: white
+     * over orange reads as chrome, and this has to read as light.
+     *
+     * `--footer-shine-band` is the mask that decides how much of that copy is
+     * showing at any moment. Soft on both edges and a third of the width, so
+     * there is no leading line to catch the eye.
+     */
+    --footer-wordmark-fill: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-brand) 6%, transparent) 0%,
+      color-mix(in oklab, var(--color-brand) 17%, transparent) 42%,
+      color-mix(in oklab, var(--color-brand) 36%, transparent) 76%,
+      color-mix(in oklab, var(--color-brand) 50%, transparent) 100%
+    );
+    --footer-wordmark-shine: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-brand) 3%, transparent) 0%,
+      color-mix(in oklab, var(--color-brand) 8%, transparent) 42%,
+      color-mix(in oklab, var(--color-brand) 16%, transparent) 76%,
+      color-mix(in oklab, var(--color-brand) 24%, transparent) 100%
+    );
+    --footer-shine-band: linear-gradient(
+      100deg,
+      transparent 34%,
+      rgb(0 0 0 / 0.55) 44%,
+      rgb(0 0 0 / 0.9) 50%,
+      rgb(0 0 0 / 0.55) 56%,
+      transparent 66%
+    );
   }
 
   /*

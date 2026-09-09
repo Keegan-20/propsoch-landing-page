@@ -4,9 +4,18 @@ import { cn } from "@/lib/cn";
 
 type Variant = "primary" | "secondary" | "quiet";
 type Size = "md" | "lg";
+type Shape = "pill" | "soft";
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium tracking-[-0.01em] transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60";
+  "inline-flex items-center justify-center gap-2 font-medium tracking-[-0.01em] transition-colors duration-150 disabled:pointer-events-none disabled:opacity-60";
+
+/* Rounding lives here rather than in a caller's className: `cn` is a plain
+   joiner, so two competing `rounded-*` utilities would be settled by stylesheet
+   order instead of by the caller. */
+const SHAPES: Record<Shape, string> = {
+  pill: "rounded-full",
+  soft: "rounded-lg",
+};
 
 const VARIANTS: Record<Variant, string> = {
   /* Brand orange with their --states-foreground label, exactly as propsoch.com
@@ -25,16 +34,30 @@ const SIZES: Record<Size, string> = {
 type StyleOptions = {
   variant?: Variant;
   size?: Size;
+  shape?: Shape;
   className?: string;
 };
 
 /** Shared styling so links and buttons can look identical without duplicating classes. */
-export function buttonStyles({ variant = "primary", size = "lg", className }: StyleOptions = {}) {
-  return cn(BASE, VARIANTS[variant], variant === "quiet" ? "min-h-11" : SIZES[size], className);
+export function buttonStyles({
+  variant = "primary",
+  size = "lg",
+  shape = "pill",
+  className,
+}: StyleOptions = {}) {
+  return cn(
+    BASE,
+    SHAPES[shape],
+    VARIANTS[variant],
+    variant === "quiet" ? "min-h-11" : SIZES[size],
+    className,
+  );
 }
 
 type ButtonProps = ComponentPropsWithoutRef<"button"> & StyleOptions;
 
-export function Button({ variant, size, className, type = "button", ...props }: ButtonProps) {
-  return <button type={type} className={buttonStyles({ variant, size, className })} {...props} />;
+export function Button({ variant, size, shape, className, type = "button", ...props }: ButtonProps) {
+  return (
+    <button type={type} className={buttonStyles({ variant, size, shape, className })} {...props} />
+  );
 }

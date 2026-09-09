@@ -152,3 +152,92 @@ export const HouseMarkerIcon = (props: IconProps) => (
     <path d="M8.2 16.4v-3.9a1.8 1.8 0 0 1 3.6 0v3.9" />
   </Icon>
 );
+
+/**
+ * The hand-drawn loop that points at the closing CTA. It is the one glyph in
+ * this file that does not sit on the shared 20×20 grid: it is a gesture rather
+ * than a symbol, so it is drawn tall on its own 36×60 box with a heavier,
+ * rounded stroke — a marker line next to the page's typography, not another
+ * UI icon. Decorative, like the rest: the button beside it says what to do.
+ */
+export const CurlArrowIcon = (props: IconProps) => (
+  <svg
+    viewBox="4 2 36 60"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+    {...props}
+  >
+    <path d="M27 4C33 15 33 22 24 27C14 32 8 26 12 20C16 14 26 18 27 28C28 38 24 48 23 55" />
+    <path d="M17.5 48.5 23 57 29 49.5" />
+  </svg>
+);
+
+/* --- Footer ---------------------------------------------------------------
+ *
+ * Same 20×20 stroke system as everything above, so the social row reads as one
+ * set rather than four vendor logos pasted together. The two glyphs that are
+ * solid in their brand form — Instagram's lens dot and YouTube's play triangle
+ * — are filled locally; nothing else departs from the shared wrapper.
+ */
+
+export const HomeIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M3.25 8.6 10 3.25l6.75 5.35v7.15a1.35 1.35 0 0 1-1.35 1.35H4.6a1.35 1.35 0 0 1-1.35-1.35Z" />
+    <path d="M8 17.1v-4.35h4v4.35" />
+  </Icon>
+);
+
+export const InstagramIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <rect x="3" y="3" width="14" height="14" rx="4.25" />
+    <circle cx="10" cy="10" r="3.4" />
+    <circle cx="14.15" cy="5.9" r="0.85" fill="currentColor" stroke="none" />
+  </Icon>
+);
+
+export const LinkedInIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="M5.9 8.6v8.5" />
+    <circle cx="5.9" cy="4.6" r="0.95" fill="currentColor" stroke="none" />
+    <path d="M10.15 17.1V8.6" />
+    <path d="M10.15 12.4a2.85 2.85 0 0 1 5.7 0v4.7" />
+  </Icon>
+);
+
+export const YouTubeIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <rect x="2.4" y="4.9" width="15.2" height="10.2" rx="3.2" />
+    <path d="M8.7 7.9 13 10l-4.3 2.1Z" fill="currentColor" />
+  </Icon>
+);
+
+export const MailIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <rect x="2.4" y="4.4" width="15.2" height="11.2" rx="2.6" />
+    <path d="m3.4 6.5 5.7 4.15a1.55 1.55 0 0 0 1.8 0L16.6 6.5" />
+  </Icon>
+);
+
+/**
+ * The logo mark that sits ahead of the wordmark in the footer lockup: a house
+ * with the research "spark" lifted off its roofline. Solid rather than stroked
+ * — it is a logotype, not an icon — so it keeps its weight at the 28px it is
+ * drawn at, and it carries no colour of its own beyond `currentColor`.
+ */
+export const PropsochMarkIcon = (props: IconProps) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+    focusable="false"
+    {...props}
+  >
+    <path d="M9.3 4.35a2 2 0 0 1 2.4 0l6.3 4.8c.5.38.79.97.79 1.59v7.86a2.4 2.4 0 0 1-2.4 2.4H4.61a2.4 2.4 0 0 1-2.4-2.4v-7.86c0-.62.29-1.21.79-1.59Z" />
+    <path d="M20 .4c.4 2 1.2 2.8 3.2 3.2-2 .4-2.8 1.2-3.2 3.2-.4-2-1.2-2.8-3.2-3.2 2-.4 2.8-1.2 3.2-3.2Z" />
+  </svg>
+);

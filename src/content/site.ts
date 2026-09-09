@@ -1,4 +1,4 @@
-import type { City, FooterColumn, NavLink } from "@/types/content";
+import type { City, FooterColumn, NavLink, SocialLink } from "@/types/content";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://propsoch-redesign.example.com";
@@ -8,7 +8,7 @@ export const BRAND = {
   legalName: "Thinkr Proptech Private Limited",
   /* verbatim: propsoch.com footer */
   tagline:
-    "Propsoch is the most advanced real estate research platform for homebuyers in India",
+    "Propsoch is the most advanced real estate research platform for homebuyers in India.",
 } as const;
 
 /* verbatim claims from propsoch.com, used once each so neither is repeated */
@@ -66,63 +66,61 @@ export const NAV_ACTIONS = {
   },
 } as const;
 
+/**
+ * The footer link columns, as propsoch.com groups them: the three sets of
+ * landing pages a buyer is most likely to arrive on from search — builder,
+ * locality, and budget or possession filter.
+ */
 export const FOOTER_COLUMNS: readonly FooterColumn[] = [
   {
-    title: "Properties",
+    title: "Top developers in Bengaluru",
     links: [
-      { label: "Search & Filter Properties", href: "#properties" },
-      { label: "Compare Properties", href: "#compare" },
-      { label: "Sell Your Property", href: "#sell" },
+      { label: "Prestige Developers", href: "#prestige-developers" },
+      { label: "Godrej Properties", href: "#godrej-properties" },
+      { label: "Brigade Developers", href: "#brigade-developers" },
+      { label: "Sobha Developers", href: "#sobha-developers" },
+      { label: "Assetz Developers", href: "#assetz-developers" },
     ],
   },
   {
-    title: "Services",
+    title: "Top areas in Bengaluru",
     links: [
-      { label: "Guided Homebuying", href: "#guided-homebuying" },
-      { label: "Peace of Mind Report", href: "#peace-of-mind" },
-      { label: "NRI Advisory", href: "#nri-advisory" },
-      { label: "Home Loans", href: "#home-loans" },
-      { label: "Legal Services", href: "#legal" },
+      { label: "Whitefield", href: "#whitefield" },
+      { label: "Sarjapur Road", href: "#sarjapur-road" },
+      { label: "Bellandur", href: "#bellandur" },
+      { label: "Yelahanka", href: "#yelahanka" },
+      { label: "HSR Layout", href: "#hsr-layout" },
     ],
   },
   {
-    title: "Resources",
+    title: "Top filters",
     links: [
-      { label: "Blog", href: "#blog" },
-      { label: "Homebuying Guide 101", href: "#guide" },
-      { label: "Homebuying Checklist", href: "#checklist" },
-      { label: "EMI Calculator", href: "#emi-calculator" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About Us", href: "#about" },
-      { label: "Customer Reviews", href: "#reviews" },
-      { label: "Careers", href: "#careers" },
+      { label: "Luxury Homes", href: "#luxury-homes" },
+      { label: "Properties <3Cr", href: "#under-3cr" },
+      { label: "Properties <2Cr", href: "#under-2cr" },
+      { label: "Ready To Move In", href: "#ready-to-move-in" },
+      { label: "Townships", href: "#townships" },
     ],
   },
 ];
 
-export const COMMUNITY_LINKS: readonly NavLink[] = [
-  { label: "Join the Bangalore Community", href: "#community-bangalore" },
-  { label: "Join the Mumbai Community", href: "#community-mumbai" },
+/** The single crumb above the footer rule, back to the top of the site. */
+export const FOOTER_HOME: NavLink = { label: "Home", href: "/" };
+
+export const SOCIAL_LINKS: readonly SocialLink[] = [
+  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/propsoch" },
+  { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/propsoch" },
+  { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@propsoch" },
+  { id: "email", label: "Email us", href: "mailto:hello@propsoch.com" },
 ];
 
-/* verbatim: propsoch.com footer compliance block */
+/* verbatim: propsoch.com footer compliance block. Rendered as running text
+   rather than a labelled table — the footer states them, it does not tabulate
+   them — so each label carries its own separator. */
 export const REGISTRATIONS = [
-  { label: "GSTIN", value: "12314ASDAD213" },
-  { label: "CIN", value: "21312215151661" },
-  {
-    label: "Karnataka RERA Reg. No.",
-    value: "PRM/KA/RERA/1251/446/AG/220927/003103",
-    href: "https://rera.karnataka.gov.in",
-  },
-  {
-    label: "Maharashtra RERA Reg. No.",
-    value: "A041182600110",
-    href: "https://maharera.maharashtra.gov.in",
-  },
+  { label: "RERA:", value: "PRM/KA/RERA/1251/446/AG/220827/003103" },
+  { label: "GSTIN -", value: "12314ASDAD213" },
+  { label: "CIN -", value: "21312216151061" },
 ] as const;
 
 export const LEGAL_LINKS: readonly NavLink[] = [

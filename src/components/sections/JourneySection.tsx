@@ -11,6 +11,7 @@ import {
   ArrowRightIcon,
   CheckIcon,
   ClipboardIcon,
+  CurlArrowIcon,
   HouseMarkerIcon,
   KeyIcon,
   ListIcon,
@@ -710,7 +711,7 @@ export function JourneySection() {
 
         <div className="mt-12 overflow-hidden rounded-2xl border border-line bg-background lg:mt-16">
           <div className="grid md:grid-cols-2">
-            <div className="relative aspect-[16/9] md:aspect-auto md:min-h-[17rem]">
+            <div className="relative aspect-video md:aspect-auto md:min-h-68">
               <Image
                 src={homeImage}
                 alt="Warm, plant-filled living room of a finished apartment, with a sofa, coffee table and bookshelves"
@@ -722,18 +723,26 @@ export function JourneySection() {
               />
             </div>
             <div className="flex flex-col justify-center gap-6 bg-brand-light p-6 sm:p-10">
-              <p className="font-display text-[1.75rem] leading-[1.15] tracking-[-0.02em] text-foreground sm:text-[2rem]">
+              <p className="font-display text-[1.25rem] leading-[1.15] tracking-[-0.02em] text-foreground sm:text-[2rem]">
                 {PROOF.outcome}
               </p>
               <div className="flex flex-col gap-3">
-                <Link
-                  href={PRIMARY_CTA.href}
-                  className={buttonStyles({ className: "w-full sm:w-auto" })}
-                >
-                  {PRIMARY_CTA.label}
-                  <ArrowRightIcon className="size-5" />
-                </Link>
-                <p className="text-[0.875rem] text-secondary-text">{PRIMARY_CTA.assurance}</p>
+        
+                <div className="flex w-fit max-w-full flex-col items-center self-center md:self-start lg:w-3/4">
+                  <CurlArrowIcon className="mb-1 h-14 w-16 sm:h-20 sm:w-18 shrink-0 text-brand" />
+                  <Link
+                    href={PRIMARY_CTA.href}
+                    className={buttonStyles({ shape: "soft", className: "w-full" })}
+                  >
+                    {PRIMARY_CTA.label}
+                    <ArrowRightIcon className="size-5" />
+                  </Link>
+                </div>
+                {/* Follows the button: centred under it while the card is
+                    stacked, left-aligned once the panel is the narrow column. */}
+                <p className="text-center text-[0.875rem] text-secondary-text md:text-left">
+                  {PRIMARY_CTA.assurance}
+                </p>
               </div>
             </div>
           </div>

@@ -10,6 +10,13 @@ export type FooterColumn = {
   readonly links: readonly NavLink[];
 };
 
+/** A footer social account. `id` picks the glyph the footer renders for it. */
+export type SocialLink = {
+  readonly id: "instagram" | "linkedin" | "youtube" | "email";
+  readonly label: string;
+  readonly href: string;
+};
+
 export type City = {
   readonly value: string;
   readonly label: string;
