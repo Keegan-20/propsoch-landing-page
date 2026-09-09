@@ -87,15 +87,15 @@ durations.
 
 
 
-## Lighthouse (after) my IM
+## Lighthouse Score (After) My Improvements
 
 **Desktop**
 
-![Lighthouse desktop — Performance 97, Accessibility 97, Best Practices 100, SEO 100, Agentic Browsing 2/2](src/assets/lighthouse/lighthouse-desktop.png)
+![Lighthouse desktop — Performance 98, Accessibility 97, Best Practices 100, SEO 100](src/assets/lighthouse/lighthouse-desktop.png)
 
 **Mobile**
 
-![Lighthouse mobile — Performance 98, Accessibility 97, Best Practices 100, SEO 100, Agentic Browsing 2/2](src/assets/lighthouse/lighthouse-mobile.png)
+![Lighthouse mobile — Performance 98, Accessibility 97, Best Practices 100, SEO 100](src/assets/lighthouse/lighthouse-mobile.png)
 
 Run against the deployed URL. Against the
 [baseline audit](https://docs.google.com/document/d/1HVXQi0vZParFoIedGeLsSezEaPzBpsquPuf5iFOvUt0/edit?usp=sharing)
@@ -103,7 +103,7 @@ of the current site:
 
 | Category | Before (desktop / mobile) | After (desktop / mobile) |
 | --- | --- | --- |
-| Performance | 97 / **64** | 97 / **98** |
+| Performance | 97 / **64** | **98 / 98** |
 | Accessibility | 80 / 84 | **97 / 97** |
 | Best Practices | 100 / 100 | 100 / 100 |
 | SEO | 83 / 92 | **100 / 100** |
